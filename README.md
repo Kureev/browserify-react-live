@@ -1,4 +1,8 @@
-### Run
+## Requirements
+
+
+
+## Getting started
 
 #### Simple way
 
@@ -13,9 +17,9 @@ node src/server dist/bundle.js
 ```
 
 ```bash
-watchify example/*.js -o dist/bundle.js
+./node_modules/.bin/watchify example/*.js -o dist/bundle.js
 ```
 
 ```
-http-server example
+./node_modules/.bin/http-server example
 ```
