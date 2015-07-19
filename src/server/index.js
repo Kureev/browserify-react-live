@@ -6,12 +6,12 @@ const broadcast = require('./notify')(wss);
 const makeWatcher = require('./makeWatcher');
 const app = express();
 
-require('./routes')(app);
-
 const args = process.argv.slice(2);
 const bundle = args[0];
 
-const sourceBundle = fs.readFileSync(bundle, 'utf8');
+const source = fs.readFileSync(bundle, 'utf8');
+
+require('./routes')(source, app);
 
 const watcher = makeWatcher(bundle, broadcast);
 

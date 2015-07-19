@@ -1,4 +1,4 @@
-module.exports = function(app) {
+module.exports = function applyRoutes(file, app) {
   app.get('/favicon.ico', function getFavico(req, res) {
     res.status(404).end();
   });
