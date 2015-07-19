@@ -7,13 +7,13 @@ const makeWatcher = require('./makeWatcher');
 const app = express();
 
 const args = process.argv.slice(2);
-const bundle = args[0];
+const file = args[0];
 
-const source = fs.readFileSync(bundle, 'utf8');
+const bundle = fs.readFileSync(file, 'utf8');
 
-require('./routes')(source, app);
+require('./routes')(bundle, app);
 
-const watcher = makeWatcher(bundle, broadcast);
+const watcher = makeWatcher(file, broadcast);
 
 const server = app.listen(3000, function daemon() {
 
