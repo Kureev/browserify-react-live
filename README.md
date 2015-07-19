@@ -1,0 +1,13 @@
+### Run
+
+```bash
+node src/server dist/bundle.js
+```
+
+```bash
+watchify example/*.js -o dist/bundle.js
+```
+
+```
+http-server example
+```
