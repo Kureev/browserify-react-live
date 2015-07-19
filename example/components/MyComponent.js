@@ -5,7 +5,7 @@ module.exports = class MyComponent extends React.Component {
     super(props);
 
     this.state = {
-      counter: 11,
+      counter: 10,
     };
   }
 

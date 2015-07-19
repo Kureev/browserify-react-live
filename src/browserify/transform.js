@@ -17,7 +17,9 @@ function injectReact() {
             var data = JSON.parse(res.data);
             if (data.source) {
               Function('return ' + data.source)();
-            } else {
+            }
+
+            if (data.message) {
               console.log(data.message);
             }
           }
@@ -30,8 +32,12 @@ function injectReact() {
 function overrideRequire() {
   return `
     ;const _require = require;
-    ;require = (function(req) {
-      if (typeof window !== 'undefined') {
+    function isReloadable(name) {
+      console.log(name.indexOf('react') === -1, name);
+      return name.indexOf('react') === -1;
+    }
+    require = (function(req) {
+      if (typeof window !== 'undefined' || !isReloadable(name)) {
         const scope = window.__hmr;
         return function(name) {
           if (!scope["__reactModule_"+name] ||
