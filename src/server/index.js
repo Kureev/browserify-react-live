@@ -1,47 +1,21 @@
 const express = require('express');
 const fs = require('fs');
-const chokidar = require('chokidar');
-const check = require('syntax-error');
+const diff = require('diff');
+const wss = require('./wss');
+const broadcast = require('./notify')(wss);
+const makeWatcher = require('./makeWatcher');
 const app = express();
-const WebSocketServer = require('ws').Server;
 
-const wss = new WebSocketServer({ port: 8081, });
+require('./routes')(app);
 
 const args = process.argv.slice(2);
 const bundle = args[0];
 
-app.get('/dev.bundle.js', function(req, res) {
-  fs.createReadStream(bundle).pipe(res);
-});
+const sourceBundle = fs.readFileSync(bundle, 'utf8');
 
-wss.on('connection', function connection(ws) {
-  ws.on('message', function incoming(message) {
-    console.log('received: %s', message);
-  });
+const watcher = makeWatcher(bundle, broadcast);
 
-  console.log('received new connection');
-
-  ws.send(JSON.stringify({ message: 'Connection complete', }));
-});
-
-chokidar.watch(bundle)
-  .on('error', function(err) {
-    console.log('Oops, an error has been occured:', err);
-  })
-  .on('change', function(path) {
-    console.log('File', path, 'has been changed');
-
-    const file = fs.readFileSync(bundle, 'utf8');
-    const err = check(file);
-
-    if (!err) {
-      wss.clients.forEach(function each(client) {
-        client.send(JSON.stringify({ source: file, }));
-      });
-    }
-  });
-
-const server = app.listen(3000, function() {
+const server = app.listen(3000, function daemon() {
 
   const host = server.address().address;
   const port = server.address().port;

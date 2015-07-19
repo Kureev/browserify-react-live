@@ -12,7 +12,7 @@ module.exports = class MyComponent extends React.Component {
   render() {
     return (
       <div>
-        Counter equal {this.state.counter}
+        Counter is equal {this.state.counter}
       </div>
     );
   }
