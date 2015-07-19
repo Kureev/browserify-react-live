@@ -1,5 +1,13 @@
 ### Run
 
+#### Simple way
+
+```bash
+npm start
+```
+
+#### Manual way
+
 ```bash
 node src/server dist/bundle.js
 ```

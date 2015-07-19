@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "browserify example/*.js -o dist/bundle.js"
+    "start": "scripts/run.sh",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Alexey Kureev <kureev-mail@ya.ru> (https://github.com/Kureev)",
   "license": "MIT",
