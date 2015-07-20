@@ -27,7 +27,7 @@ function overrideExports() {
   return `
     ;(function() {
       if (module.exports.name || module.exports.displayName) {
-        module.exports = window.__hmr.makeHot(module.exports);
+        module.exports = scope.makeHot(module.exports);
       }
     })();
   `;
