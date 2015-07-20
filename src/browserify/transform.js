@@ -12,11 +12,21 @@ function injectReact() {
           scope.React = require('react');
           scope.ReactMount = require('react/lib/ReactMount');
           scope.ws = new WebSocket('ws://localhost:8081');
+          var diff = require('diff');
 
           scope.ws.onmessage = function(res) {
             var data = JSON.parse(res.data);
             if (data.source) {
-              Function('return ' + data.source)();
+              scope.initialBundle = data.source;
+              var size = Math.round((data.source.length / 1024) * 100) / 100;
+              console.log('Initial bundle size:', size, 'kb');
+            }
+
+            if (data.patch) {
+              var patched = diff.applyPatch(scope.initialBundle, data.patch);
+              var size = Math.round((data.patch.length / 1024) * 100) / 100;
+              console.log('Received patch for ', size, 'kb');
+              Function('return ' + patched)();
             }
 
             if (data.message) {
@@ -31,11 +41,11 @@ function injectReact() {
 
 function overrideRequire() {
   return `
-    ;const _require = require;
     function isReloadable(name) {
-      console.log(name.indexOf('react') === -1, name);
+      // @todo Replace this sketch by normal one
       return name.indexOf('react') === -1;
     }
+
     require = (function(req) {
       if (typeof window !== 'undefined' || !isReloadable(name)) {
         const scope = window.__hmr;
@@ -56,7 +66,7 @@ function overrideRequire() {
 
 function overrideExports() {
   return `
-    ;(function(require) {
+    ;(function() {
       if (typeof window !== 'undefined') {
         if (module.exports.name || module.exports.displayName) {
           const scope = window.__hmr;
@@ -67,7 +77,7 @@ function overrideExports() {
           module.exports = scope.makeHot(module.exports);
         }
       }
-    })(_require);
+    })();
   `;
 }
 
