@@ -1,6 +1,6 @@
 ## Requirements
 
-
+`node` > 0.10 or `io.js` > 2.0 installed
 
 ## Getting started
 
