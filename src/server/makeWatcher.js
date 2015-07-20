@@ -8,12 +8,11 @@ module.exports = function makeWatcher(bundle, callback) {
       console.log('Oops, an error has been occured:', err);
     })
     .on('change', function onChange(path) {
-      console.log('File', path, 'has been changed');
-
       const file = fs.readFileSync(bundle, 'utf8');
       const err = check(file);
 
       if (!err) {
+        console.log('File', path, 'has been changed');
         callback(file);
       }
     });
