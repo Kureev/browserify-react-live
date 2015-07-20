@@ -16,8 +16,8 @@
     "react-hot-api": "^0.4.5",
     "syntax-error": "^1.1.4",
     "through2": "^2.0.0",
-    "ws": "^0.7.2"
+    "ws": "^0.7.2",
     "browserify": "^11.0.0",
     "watchify": "^3.3.0"
-  },
+  }
 }
