@@ -12,6 +12,7 @@ module.exports = function overrideRequire(scope, req) {
         return scope.ReactDOM;
       }
     } else {
+      scope.modules = scope.modules || {};
       // @todo Implement caching
       scope.modules[name] = req(name);
 
