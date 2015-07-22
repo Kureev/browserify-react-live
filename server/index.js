@@ -4,15 +4,25 @@ const makeWatcher = require('./makeWatcher');
 const compose = require('ramda').compose;
 const app = express();
 
+const bundles = new Datastore();
+
 module.exports = function runServer(file) {
-  const bundle = fs.readFileSync(file, 'utf8');
-  const patchBundle = require('./makePatch')(bundle);
-  const wss = require('./wss')(bundle);
+
+  const content = fs.readFileSync(file, 'utf8');
+  const wss = require('./wss')(content);
   const broadcast = require('./notify')(wss);
 
-  require('./routes')(bundle, app);
+  const patch = require('./makePatch')(content);
 
-  const watcher = makeWatcher(file, compose(broadcast, patchBundle));
+  app.get('/favicon.ico', function getFavico(req, res) {
+    res.status(404).end();
+  });
+
+  app.get('/dev.bundle.js', function defaultBundle(req, res) {
+    res.send(fs.readFileSync(file, 'utf8'));
+  });
+
+  const watcher = makeWatcher(file, compose(broadcast, patch));
   const server = app.listen(3000, function daemon() {
 
     const host = server.address().address;
