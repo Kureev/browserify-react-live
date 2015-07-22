@@ -3,6 +3,7 @@ function bytesToKb(bytes) {
 }
 
 module.exports = function injectWebSocket(scope) {
+  if (scope.ws) return;
   scope.ws = new WebSocket('ws://localhost:8081');
 
   scope.ws.onmessage = function onMessage(res) {

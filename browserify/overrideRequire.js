@@ -13,7 +13,6 @@ module.exports = function overrideRequire(scope, req) {
       }
     } else {
       scope.modules = scope.modules || {};
-      // @todo Implement caching
       scope.modules[name] = req(name);
 
       return scope.modules[name];
