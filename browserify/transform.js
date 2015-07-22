@@ -19,7 +19,7 @@ function injectReact() {
 
 function overrideRequire() {
   return `
-    require = require('browserify-react-live/browserify/overrideRequire')(require);
+    require = require('browserify-react-live/browserify/overrideRequire')(scope, require);
   `;
 }
 

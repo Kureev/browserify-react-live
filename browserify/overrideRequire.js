@@ -3,7 +3,7 @@ function isReloadable(name) {
   return name.indexOf('react') === -1;
 }
 
-module.exports = function injectRequire(req) {
+module.exports = function overrideRequire(scope, req) {
   return function overrideRequire(name) {
     if (!isReloadable(name)) {
       if (name === 'react') {
