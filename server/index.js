@@ -4,8 +4,6 @@ const makeWatcher = require('./makeWatcher');
 const compose = require('ramda').compose;
 const app = express();
 
-const bundles = new Datastore();
-
 module.exports = function runServer(file) {
 
   const content = fs.readFileSync(file, 'utf8');
