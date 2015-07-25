@@ -1,6 +1,7 @@
 var moment = require('moment');
 var Logdown = require('logdown');
-var logger = new Logdown({ prefix: '[BDS]', });
+var system = new Logdown({ prefix: '[BDS:SYSTEM]', });
+var message = new Logdown({ prefix: '[BDS:MSG]', });
 var diff = require('diff');
 var size = 0;
 var patched;
@@ -22,18 +23,18 @@ module.exports = function injectWebSocket(scope) {
     if (data.source) {
       scope.initialBundle = data.source;
       size = bytesToKb(data.source.length);
-      logger.log(timestamp + ' Initial bundle size: *' + size + 'kb*');
+      system.log(timestamp + ' Initial bundle size: *' + size + 'kb*');
     }
 
     if (data.patch) {
       patched = diff.applyPatch(scope.initialBundle, data.patch);
       size = bytesToKb(data.patch.length);
-      logger.log(timestamp + ' Received patch for *' + size + 'kb*');
+      system.log(timestamp + ' Received patch for *' + size + 'kb*');
       Function('return ' + patched)();
     }
 
     if (data.message) {
-      console.log(data.message);
+      message.log(timestamp + ' ' + data.message);
     }
   };
 };

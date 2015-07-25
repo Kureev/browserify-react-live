@@ -4,7 +4,7 @@ const fs = require('fs');
 
 const Logdown = require('logdown');
 const moment = require('moment');
-const logger = new Logdown({ prefix: '[BDS]', });
+const logger = new Logdown({ prefix: '[BDS:SYSTEM]', });
 
 module.exports = function makeWatcher(bundle, callback) {
   return chokidar.watch(bundle)

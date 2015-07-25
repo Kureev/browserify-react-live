@@ -6,7 +6,7 @@ module.exports = function makeWSS(source) {
   wss.on('connection', function connection(ws) {
     ws.send(
       JSON.stringify({
-        message: 'Connection complete',
+        message: 'Connected to browserify-dev-server',
         source: source,
       })
     );
