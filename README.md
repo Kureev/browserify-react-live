@@ -4,22 +4,27 @@
 
 ## Getting started
 
-#### Simple way
-
+#### Install
 ```bash
-npm start
+npm install browserify-dev-server
 ```
 
-#### Manual way
-
+Then add following code to your `package.json`:
+```json
+"browserify": {
+  "transform": [
+    "browserify-react-live"
+  ]
+}
+```
+or run watchify with transform from the CLI:
 ```bash
-node src/server dist/bundle.js
+watchify -t browserify-react-live src/file.js -o bundles/file.js
 ```
 
+After that you should run your `browserify-dev-server` with bundle you want to be live:
 ```bash
-./node_modules/.bin/watchify example/*.js -o dist/bundle.js
+node_modules/.bin/browserify-dev-server bundles/file.js
 ```
 
-```
-./node_modules/.bin/http-server example
-```
+That's it, now just run the default server you use and enjoy live editing!
