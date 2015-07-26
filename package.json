@@ -19,7 +19,6 @@
     "moment": "^2.10.3",
     "ramda": "^0.16.0",
     "react-hot-api": "^0.4.5",
-    "syntax-error": "^1.1.4",
     "through2": "^2.0.0",
     "watchify": "^3.3.0",
     "ws": "^0.7.2",

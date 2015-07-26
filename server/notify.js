@@ -1,9 +1,7 @@
 module.exports = function createBoradcast(wss) {
-  return function broadcast(patch) {
-    if (!patch) return false;
-
+  return function broadcast(message) {
     wss.clients.forEach(function each(client) {
-      client.send(JSON.stringify({ patch: patch, }));
+      client.send(JSON.stringify(message));
     });
   };
 };
