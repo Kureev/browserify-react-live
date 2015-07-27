@@ -57,10 +57,16 @@ module.exports = function injectWebSocket(scope) {
      * @param  {Diff} data.patch
      */
     if (data.patch) {
-      patched = diff.applyPatch(scope.initialBundle, data.patch);
-
       system.log(timestamp + ' Received patch for *' +
         data.bundle + '* (' + bytesToKb(data.patch.length) + 'kb)');
+
+      try {
+        patched = diff.applyPatch(scope.initialBundle, data.patch);
+      } catch (e) {
+        error.error('Patch failed. Can\'t apply last patch to source: ' + e);
+      }
+
+      system.log(timestamp + ' Applied patch to *' + data.bundle + '*');
 
       Function('return ' + patched)();
     }
