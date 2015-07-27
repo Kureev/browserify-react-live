@@ -28,3 +28,12 @@ node_modules/.bin/browserify-dev-server bundles/file.js
 ```
 
 That's it, now just run the default server you use and enjoy live editing!
+
+#### Quick example
+```bash
+git clone https://github.com/Kureev/browserify-react-live.git
+cd browserify-react-live/examples/01\ -\ Basic
+npm i && npm start
+```
+
+Now just open [http://localhost:8080](http://localhost:8080) and get ready for react-live magic
