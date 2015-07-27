@@ -3,34 +3,31 @@ const path = require('path');
 const util = require('util');
 
 function injectReact() {
-  return `
-    ;const scope = window.__hmr = (window.__hmr || {});
-    (function() {
-      if (typeof window === 'undefined') return;
-
-      if (!scope.initialized) {
-        require('browserify-react-live/browserify/injectReactDeps')(scope);
-        require('browserify-react-live/browserify/injectWebSocket')(scope);
-        scope.initialized = true;
-      }
-    })();
-  `;
+  return '' +
+    ';const scope = window.__hmr = (window.__hmr || {});' +
+    '(function() {' +
+      'if (typeof window === \'undefined\') return;' +
+      'if (!scope.initialized) {' +
+        'require(\'browserify-react-live/browserify/injectReactDeps\')(scope);' +
+        'require(\'browserify-react-live/browserify/injectWebSocket\')(scope);' +
+        'scope.initialized = true;' +
+      '}' +
+    '})();';
 }
 
 function overrideRequire() {
-  return `
-    require = require('browserify-react-live/browserify/overrideRequire')(scope, require);
-  `;
+  return '' +
+    'require = require(\'browserify-react-live/browserify/overrideRequire\')' +
+    '(scope, require);';
 }
 
 function overrideExports() {
-  return `
-    ;(function() {
-      if (module.exports.name || module.exports.displayName) {
-        module.exports = scope.makeHot(module.exports);
-      }
-    })();
-  `;
+  return '' +
+    ';(function() {' +
+      'if (module.exports.name || module.exports.displayName) {' +
+        'module.exports = scope.makeHot(module.exports);' +
+      '}' +
+    '})();';
 }
 
 module.exports = function applyReactHotAPI(file, options) {
