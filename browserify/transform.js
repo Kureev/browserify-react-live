@@ -3,31 +3,31 @@ const path = require('path');
 const util = require('util');
 
 function injectReact() {
-  return '' +
-    ';const scope = window.__hmr = (window.__hmr || {});' +
-    '(function() {' +
-      'if (typeof window === \'undefined\') return;' +
-      'if (!scope.initialized) {' +
-        'require(\'browserify-react-live/browserify/injectReactDeps\')(scope);' +
+  return '\n' +
+    ';const scope = window.__hmr = (window.__hmr || {});\n' +
+    '(function() {\n' +
+      'if (typeof window === \'undefined\') return;\n' +
+      'if (!scope.initialized) {\n' +
+        'require(\'browserify-react-live/browserify/injectReactDeps\')(scope);\n' +
         'require(\'browserify-react-live/browserify/injectWebSocket\')(scope);' +
-        'scope.initialized = true;' +
-      '}' +
-    '})();';
+        'scope.initialized = true;\n' +
+      '}\n' +
+    '})();\n';
 }
 
 function overrideRequire() {
-  return '' +
-    'require = require(\'browserify-react-live/browserify/overrideRequire\')' +
+  return '\n' +
+    'require = require("browserify-react-live/browserify/overrideRequire")' +
     '(scope, require);';
 }
 
 function overrideExports() {
-  return '' +
-    ';(function() {' +
-      'if (module.exports.name || module.exports.displayName) {' +
-        'module.exports = scope.makeHot(module.exports);' +
-      '}' +
-    '})();';
+  return '\n' +
+    ';(function() {\n' +
+      'if (module.exports.name || module.exports.displayName) {\n' +
+        'module.exports = scope.makeHot(module.exports);\n' +
+      '}\n' +
+    '})();\n';
 }
 
 module.exports = function applyReactHotAPI(file, options) {
