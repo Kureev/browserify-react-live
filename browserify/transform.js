@@ -2,14 +2,15 @@ const through = require('through2');
 const path = require('path');
 const util = require('util');
 
-function injectReact() {
+function initialize(options) {
   return '\n' +
-    ';const scope = window.__hmr = (window.__hmr || {});\n' +
+    'const options = JSON.parse(\'' + JSON.stringify(options) + '\');\n' +
+    'const scope = window.__hmr = (window.__hmr || {});\n' +
     '(function() {\n' +
       'if (typeof window === \'undefined\') return;\n' +
       'if (!scope.initialized) {\n' +
-        'require(\'browserify-react-live/browserify/injectReactDeps\')(scope);\n' +
-        'require(\'browserify-react-live/browserify/injectWebSocket\')(scope);' +
+        'require(\'browserify-react-live/browserify/injectReactDeps\')(scope, options);\n' +
+        'require(\'browserify-react-live/browserify/injectWebSocket\')(scope, options);' +
         'scope.initialized = true;\n' +
       '}\n' +
     '})();\n';
@@ -42,7 +43,7 @@ module.exports = function applyReactHotAPI(file, options) {
     function finish(done) {
       content = content.join('');
       const bundle = util.format('%s%s%s%s',
-        injectReact(),
+        initialize(options),
         overrideRequire(),
         content,
         overrideExports()

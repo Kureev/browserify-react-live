@@ -1,5 +1,4 @@
 const fs = require('fs');
-const makeWatcher = require('./makeWatcher');
 const compose = require('ramda').compose;
 const check = require('syntax-error');
 
@@ -28,17 +27,23 @@ function getTimestamp() {
   return '['+ moment().format('HH:mm:ss') + ']';
 }
 
-module.exports = function runServer(file) {
-  const content = fs.readFileSync(file, 'utf8');
-  const wss = require('./wss')(content);
+module.exports = function runServer(files) {
+  const sources = files.map(function iterateFiles(file) {
+    return {
+      file: file,
+      content: fs.readFileSync(file, 'utf8'),
+    };
+  });
+
+  const wss = require('./wss')(sources);
   const broadcast = require('./notify')(wss);
-  const patchMessage = makeBuildPatchMessage(file);
-  const patch = require('./makePatch')(content);
-  const watcher = makeWatcher(file);
+  const patch = require('./makePatch')(sources);
+  const watcher = require('./makeWatcher')(files);
 
   watcher.setMaxListeners(0);
 
   watcher.on('change', function onChange(path) {
+    const patchMessage = makeBuildPatchMessage(path);
     const timestamp = getTimestamp();
     /**
      * Get latest content of the watched path
@@ -77,7 +82,7 @@ module.exports = function runServer(file) {
         });
       } else {
         logger.info(timestamp + ' Bundle *' + path + '* has been changed');
-        compose(broadcast, patchMessage, patch)(_content);
+        compose(broadcast, patchMessage, patch)(path, _content);
       }
     });
   });

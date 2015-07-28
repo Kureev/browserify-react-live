@@ -6,6 +6,7 @@ var system = new Logdown({ prefix: '[BDS:SYSTEM]', });
 var error = new Logdown({ prefix: '[BDS:ERROR]', });
 var message = new Logdown({ prefix: '[BDS:MSG]', });
 var size = 0;
+var port = 8081;
 var patched;
 var timestamp;
 var data;
@@ -19,9 +20,11 @@ function bytesToKb(bytes) {
   return Math.round((bytes / 1024) * 100) / 100;
 }
 
-module.exports = function injectWebSocket(scope) {
+module.exports = function injectWebSocket(scope, options) {
   if (scope.ws) return;
-  scope.ws = new WebSocket('ws://localhost:8081');
+
+  if (options.port) port = options.port;
+  scope.ws = new WebSocket('ws://localhost:' + port);
 
   scope.ws.onmessage = function onMessage(res) {
     timestamp = '['+ moment().format('HH:mm:ss') + ']';
@@ -42,14 +45,16 @@ module.exports = function injectWebSocket(scope) {
     }
 
     /**
-     * Setup initial bundle
-     * @param  {String} data.source
+     * Setup initial bundles
+     * @param  {String} data.sources
      */
-    if (data.source) {
-      scope.initialBundle = data.source;
+    if (data.sources) {
+      scope.bundles = data.sources;
 
-      system.log(timestamp + ' Initial bundle size: *' +
-        bytesToKb(data.source.length) + 'kb*');
+      scope.bundles.forEach(function iterateBundles(bundle) {
+        system.log(timestamp + ' Initial bundle size: *' +
+          bytesToKb(bundle.content.length) + 'kb*');
+      });
     }
 
     /**
@@ -60,10 +65,14 @@ module.exports = function injectWebSocket(scope) {
       system.log(timestamp + ' Received patch for *' +
         data.bundle + '* (' + bytesToKb(data.patch.length) + 'kb)');
 
+      var source = scope.bundles.filter(function filterBundle(bundle) {
+        return bundle.file === data.bundle;
+      })[0].content;
+
       try {
-        patched = diff.applyPatch(scope.initialBundle, data.patch);
+        patched = diff.applyPatch(source, data.patch);
       } catch (e) {
-        error.error('Patch failed. Can\'t apply last patch to source: ' + e);
+        return error.error('Patch failed. Can\'t apply last patch to source: ' + e);
       }
 
       system.log(timestamp + ' Applied patch to *' + data.bundle + '*');

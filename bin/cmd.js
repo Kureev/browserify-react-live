@@ -5,6 +5,4 @@ var argv = require('yargs')
     .demand(1)
     .argv;
 
-var file = argv._[0];
-
-require('../server')(file);
+require('../server')(argv._);
