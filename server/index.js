@@ -27,7 +27,12 @@ function getTimestamp() {
   return '['+ moment().format('HH:mm:ss') + ']';
 }
 
-module.exports = function runServer(files) {
+module.exports = function runServer(files, options) {
+  const pjsonConfigPort = process.env
+    .npm_package_browserify_dev_server_port;
+
+  const port = options.port || pjsonConfigPort || 8081;
+
   const sources = files.map(function iterateFiles(file) {
     return {
       file: file,
@@ -35,7 +40,7 @@ module.exports = function runServer(files) {
     };
   });
 
-  const wss = require('./wss')(sources);
+  const wss = require('./wss')(sources, port);
   const broadcast = require('./notify')(wss);
   const patch = require('./makePatch')(sources);
   const watcher = require('./makeWatcher')(files);
@@ -87,5 +92,8 @@ module.exports = function runServer(files) {
     });
   });
 
-  logger.info(getTimestamp() + ' *Browserify development server* has been started');
+  logger.info(getTimestamp() +
+    ' *Browserify development server* has been started ' +
+    'on port *' + port + '*'
+  );
 };

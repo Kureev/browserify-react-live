@@ -1,9 +1,9 @@
 const fs = require('fs');
 const WebSocketServer = require('ws').Server;
 
-const wss = new WebSocketServer({ port: 8081, });
+module.exports = function makeWSS(sources, port) {
+  const wss = new WebSocketServer({ port: port, });
 
-module.exports = function makeWSS(sources) {
   wss.on('connection', function connection(ws) {
     ws.send(
       JSON.stringify({
