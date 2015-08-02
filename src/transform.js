@@ -1,7 +1,21 @@
 const through = require('through2');
-const path = require('path');
-const util = require('util');
+const pjson = require('../package.json');
 
+/**
+ * Resolve path to library file
+ * @param  {String} file
+ * @return {String}
+ */
+function pathTo(file) {
+  return pjson.name + '/src/' + file;
+}
+
+/**
+ * Initialize react live patch
+ * @description Inject React & WS, create namespace
+ * @param  {Object} options
+ * @return {String}
+ */
 function initialize(options) {
   return '\n' +
     'const options = JSON.parse(\'' + JSON.stringify(options) + '\');\n' +
@@ -9,19 +23,27 @@ function initialize(options) {
     '(function() {\n' +
       'if (typeof window === \'undefined\') return;\n' +
       'if (!scope.initialized) {\n' +
-        'require(\'browserify-react-live/browserify/injectReactDeps\')(scope, options);\n' +
-        'require(\'browserify-react-live/browserify/injectWebSocket\')(scope, options);' +
+        'require("' + pathTo('injectReactDeps') + '")(scope, options);\n' +
+        'require("' + pathTo('injectWebSocket') + '")(scope, options);' +
         'scope.initialized = true;\n' +
       '}\n' +
     '})();\n';
 }
 
+/**
+ * Override require to proxy react/component require
+ * @return {String}
+ */
 function overrideRequire() {
   return '\n' +
-    'require = require("browserify-react-live/browserify/overrideRequire")' +
+    'require = require("' + pathTo('overrideRequire') + '")' +
     '(scope, require);';
 }
 
+/**
+ * Decorate every component module by `react-hot-api` makeHot method
+ * @return {String}
+ */
 function overrideExports() {
   return '\n' +
     ';(function() {\n' +
@@ -42,12 +64,10 @@ module.exports = function applyReactHotAPI(file, options) {
 
     function finish(done) {
       content = content.join('');
-      const bundle = util.format('%s%s%s%s',
-        initialize(options),
-        overrideRequire(),
-        content,
-        overrideExports()
-      );
+      const bundle = initialize(options) +
+        overrideRequire() +
+        content +
+        overrideExports();
 
       this.push(bundle);
       done();

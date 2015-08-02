@@ -62,12 +62,15 @@ module.exports = function injectWebSocket(scope, options) {
      * @param  {Diff} data.patch
      */
     if (data.patch) {
-      system.log(timestamp + ' Received patch for *' +
+      console.groupCollapsed(timestamp, 'Patch for', data.bundle);
+      system.log('Received patch for *' +
         data.bundle + '* (' + bytesToKb(data.patch.length) + 'kb)');
 
       var source = scope.bundles.filter(function filterBundle(bundle) {
         return bundle.file === data.bundle;
       })[0].content;
+
+      system.log('Patch content:\n\n', data.patch, '\n\n');
 
       try {
         patched = diff.applyPatch(source, data.patch);
@@ -75,9 +78,16 @@ module.exports = function injectWebSocket(scope, options) {
         return error.error('Patch failed. Can\'t apply last patch to source: ' + e);
       }
 
-      system.log(timestamp + ' Applied patch to *' + data.bundle + '*');
-
       Function('return ' + patched)();
+
+      scope.bundles.forEach(function iterateBundles(bundle) {
+        if (bundle.file === data.bundle) {
+          bundle.content = patched;
+        }
+      });
+
+      system.log('Applied patch to *' + data.bundle + '*');
+      console.groupEnd();
     }
 
     /**
