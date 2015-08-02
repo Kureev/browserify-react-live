@@ -1,1 +1,1 @@
-module.exports = require('./browserify/transform');
+module.exports = require('./src/transform');

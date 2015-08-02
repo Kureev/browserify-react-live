@@ -41,7 +41,7 @@ npm i && npm start
 Now at [http://localhost:8080](http://localhost:8080) you can see running example
 
 #### Configuration
-By default, `browserify-dev-server` establish websocket connection over `:8081` port. If you want to change it, you're free to configure your server and transform to use any other port:
+By default, `browserify-dev-server` establish websocket connection over `8081` port. If you want to change it, you're free to configure your server and transform to use any other port:
 
 - Server
   ```bash
