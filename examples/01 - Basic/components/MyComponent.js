@@ -13,7 +13,7 @@ module.exports = class MyComponent extends React.Component {
   }
 
   onClick() {
-    this.setState({ counter: this.state.counter + 2, });
+    this.setState({ counter: this.state.counter + 1, });
   }
 
   render() {
