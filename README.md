@@ -1,10 +1,10 @@
 ## Requirements
 
 - `node` > 0.10 or `io.js` > 2.0
-- `browserify-patch-server`
+- [`browserify-patch-server`](https://github.com/Kureev/browserify-patch-server)
 
 ## Getting started
-**Warning:** this transform wouldn't work without `browserify-patch-server` or library, providing the same API!
+**Warning:** this transform wouldn't work without [`browserify-patch-server`](https://github.com/Kureev/browserify-patch-server) or library, providing the same API!
 
 #### Install
 ```bash
