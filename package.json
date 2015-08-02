@@ -3,9 +3,6 @@
   "version": "0.3.0",
   "description": "React live module reload for browserify",
   "main": "index.js",
-  "bin": {
-    "browserify-dev-server": "./bin/browserify-dev-server"
-  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

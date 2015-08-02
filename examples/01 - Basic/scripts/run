@@ -1,5 +1,5 @@
 #!/bin/bash
 node_modules/.bin/watchify index.js -o dist/bundle.js &
-node_modules/.bin/browserify-dev-server dist/bundle.js &
+node_modules/.bin/bfps dist/bundle.js &
 node_modules/.bin/http-server . -s &
 wait
