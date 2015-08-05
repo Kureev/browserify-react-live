@@ -1,6 +1,6 @@
 {
   "name": "browserify-react-live",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "React live module reload for browserify",
   "main": "index.js",
   "scripts": {
