@@ -64,12 +64,18 @@ module.exports = function applyReactHotAPI(file, options) {
 
     function finish(done) {
       content = content.join('');
-      const bundle = initialize(options) +
-        overrideRequire() +
-        content +
-        overrideExports();
 
-      this.push(bundle);
+      if (file.slice(-4) === 'json') {
+        this.push(content);
+      } else {
+        const bundle = initialize(options) +
+          overrideRequire() +
+          content +
+          overrideExports();
+
+        this.push(bundle);
+      }
+
       done();
     }
   );
