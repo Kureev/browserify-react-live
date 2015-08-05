@@ -20,10 +20,11 @@ function bytesToKb(bytes) {
   return Math.round((bytes / 1024) * 100) / 100;
 }
 
-module.exports = function injectWebSocket(scope, options) {
+module.exports = function injectWebSocket(scope, customPort) {
   if (scope.ws) return;
 
-  if (options.port) port = options.port;
+  port = customPort ? customPort : port;
+
   scope.ws = new WebSocket('ws://localhost:' + port);
 
   scope.ws.onmessage = function onMessage(res) {

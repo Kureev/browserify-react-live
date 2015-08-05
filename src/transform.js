@@ -17,15 +17,15 @@ function pathTo(file) {
  * @return {String}
  */
 function initialize(options) {
+  var port = options.port;
+
   return '\n' +
-    'const options = JSON.parse(\'' + JSON.stringify(options) + '\');\n' +
-    'const scope = window.__hmr = (window.__hmr || {});\n' +
+    'var $$scope = window.__hmr = (window.__hmr || {});\n' +
     '(function() {\n' +
-      'if (typeof window === \'undefined\') return;\n' +
-      'if (!scope.initialized) {\n' +
-        'require("' + pathTo('injectReactDeps') + '")(scope, options);\n' +
-        'require("' + pathTo('injectWebSocket') + '")(scope, options);' +
-        'scope.initialized = true;\n' +
+      'if (!$$scope.initialized) {\n' +
+        'require("' + pathTo('injectReactDeps') + '")($$scope);\n' +
+        'require("' + pathTo('injectWebSocket') + '")($$scope, ' + port + ');' +
+        '$$scope.initialized = true;\n' +
       '}\n' +
     '})();\n';
 }
@@ -37,7 +37,7 @@ function initialize(options) {
 function overrideRequire() {
   return '\n' +
     'require = require("' + pathTo('overrideRequire') + '")' +
-    '(scope, require);';
+    '($$scope, require);\n';
 }
 
 /**
@@ -48,13 +48,23 @@ function overrideExports() {
   return '\n' +
     ';(function() {\n' +
       'if (module.exports.name || module.exports.displayName) {\n' +
-        'module.exports = scope.makeHot(module.exports);\n' +
+        'module.exports = $$scope.makeHot(module.exports);\n' +
       '}\n' +
     '})();\n';
 }
 
+/**
+ * Check if file is JSON (duck test)
+ * @param  {String}  file
+ * @return {Boolean}
+ */
+function isJSON(file) {
+  return file.slice(-4) === 'json';
+}
+
 module.exports = function applyReactHotAPI(file, options) {
   var content = [];
+  var port = options.port;
 
   return through(
     function transform(part, enc, next) {
@@ -63,19 +73,20 @@ module.exports = function applyReactHotAPI(file, options) {
     },
 
     function finish(done) {
+      var bundle;
       content = content.join('');
 
-      if (file.slice(-4) === 'json') {
-        this.push(content);
+      if (isJSON(file)) {
+        bundle = content;
       } else {
-        const bundle = initialize(options) +
+        bundle = initialize({ port: port, }) +
           overrideRequire() +
           content +
           overrideExports();
-
-        this.push(bundle);
       }
 
+      this.push(bundle);
+      content = [];
       done();
     }
   );
