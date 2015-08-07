@@ -4,7 +4,7 @@
 - [`browserify-patch-server`](https://github.com/Kureev/browserify-patch-server)
 
 ## Getting started
-**Warning:** this transform wouldn't work without [`browserify-patch-server`](https://github.com/Kureev/browserify-patch-server) or library, providing the same API!
+This transform would work only with [`browserify-patch-server`](https://github.com/Kureev/browserify-patch-server) or library, providing the same API!
 
 #### Migration 1.x -> 2.x
 **WARNING**: 2.x version isn't stable at this moment. Use 1.x instead
