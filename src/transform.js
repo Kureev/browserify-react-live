@@ -1,5 +1,6 @@
 const through = require('through2');
 const pjson = require('../package.json');
+const path = require('path');
 
 /**
  * Resolve path to library file
@@ -21,7 +22,6 @@ function initialize(options) {
 
   return '\n' +
     'var $$scope = window.__hmr = (window.__hmr || {});\n' +
-    'require = require("' + pathTo('overrideRequire') + '")($$scope, require);\n' +
     'if (!$$scope.initialized) {\n' +
       'require("' + pathTo('injectReactDeps') + '")($$scope);\n' +
       'require("' + pathTo('injectWebSocket') + '")($$scope, require, ' + port + ');' +
@@ -49,6 +49,13 @@ function isJSON(file) {
   return file.slice(-4) === 'json';
 }
 
+function overrideRequire(file) {
+  return '\n' +
+  '$$scope.__root = $$scope.__root || "' + path.resolve(file, '../') + '";\n' +
+  'require = require("' + pathTo('overrideRequire') + '")' +
+  '($$scope, require, "' + file + '");\n';
+}
+
 module.exports = function applyReactHotAPI(file, options) {
   var content = [];
   var port = options.port;
@@ -67,6 +74,7 @@ module.exports = function applyReactHotAPI(file, options) {
         bundle = content;
       } else {
         bundle = initialize({ port: port, }) +
+          overrideRequire(file) +
           content +
           overrideExports();
       }
