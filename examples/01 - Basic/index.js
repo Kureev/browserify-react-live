@@ -1,4 +1,8 @@
-const React = require('react');
-const MyComponent = require('./components/MyComponent');
+var React = require('react');
+var MyComponent = require('./components/MyComponent');
 
-React.render(<MyComponent />, document.getElementById('playground'));
+React.render((
+  <div>
+    <MyComponent />
+  </div>
+), document.getElementById('playground'));
