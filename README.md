@@ -6,6 +6,9 @@
 ## Getting started
 **Warning:** this transform wouldn't work without [`browserify-patch-server`](https://github.com/Kureev/browserify-patch-server) or library, providing the same API!
 
+#### Migration 1.x -> 2.x
+- Now you need to watch files instead of bundle. E.g. `components/*` instead of `dist/bundle.js`
+
 #### Install
 ```bash
 npm install browserify-react-live --save-dev
