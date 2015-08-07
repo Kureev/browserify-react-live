@@ -20,7 +20,7 @@ function bytesToKb(bytes) {
   return Math.round((bytes / 1024) * 100) / 100;
 }
 
-module.exports = function injectWebSocket(scope, customPort) {
+module.exports = function injectWebSocket(scope, req, customPort) {
   if (scope.ws) return;
 
   port = customPort ? customPort : port;
@@ -41,34 +41,34 @@ module.exports = function injectWebSocket(scope, customPort) {
       var errFile = errObj[1];
       var errMsg = errObj[2].match(/(.+) while parsing file/)[1];
 
-      error.error(timestamp + ' Bundle *' + data.bundle + '* is corrupted:' +
+      error.error(timestamp + ' Bundle *' + data.file + '* is corrupted:' +
         '\n\n ' + errFile + '\n\t ⚠ ' + errMsg + '\n');
     }
 
     /**
-     * Setup initial bundles
+     * Setup initial files
      * @param  {String} data.sources
      */
     if (data.sources) {
-      scope.bundles = data.sources;
+      scope.files = data.sources;
 
-      scope.bundles.forEach(function iterateBundles(bundle) {
-        system.log(timestamp + ' Initial bundle size: *' +
-          bytesToKb(bundle.content.length) + 'kb*');
+      scope.files.forEach(function iterateBundles(file) {
+        system.log(timestamp + ' Initial file size: *' +
+          bytesToKb(file.content.length) + 'kb*');
       });
     }
 
     /**
-     * Apply patch to initial bundle
+     * Apply patch to initial file
      * @param  {Diff} data.patch
      */
     if (data.patch) {
-      console.groupCollapsed(timestamp, 'Patch for', data.bundle);
+      console.groupCollapsed(timestamp, 'Patch for', data.file);
       system.log('Received patch for *' +
-        data.bundle + '* (' + bytesToKb(data.patch.length) + 'kb)');
+        data.file + '* (' + bytesToKb(data.patch.length) + 'kb)');
 
-      var source = scope.bundles.filter(function filterBundle(bundle) {
-        return bundle.file === data.bundle;
+      var source = scope.files.filter(function filterBundle(file) {
+        return file.file === data.file;
       })[0].content;
 
       system.log('Patch content:\n\n', data.patch, '\n\n');
@@ -79,15 +79,21 @@ module.exports = function injectWebSocket(scope, customPort) {
         return error.error('Patch failed. Can\'t apply last patch to source: ' + e);
       }
 
-      Function('return ' + patched)();
+      var f = Function(['require', 'module', 'exports', ], patched);
+      var _module = {};
+      f(req, _module, {});
 
-      scope.bundles.forEach(function iterateBundles(bundle) {
-        if (bundle.file === data.bundle) {
-          bundle.content = patched;
+      if (_module.exports.name || _module.exports.displayName) {
+        scope.makeHot(_module.exports);
+      }
+
+      scope.files.forEach(function iterateBundles(file) {
+        if (file.file === data.file) {
+          file.content = patched;
         }
       });
 
-      system.log('Applied patch to *' + data.bundle + '*');
+      system.log('Applied patch to *' + data.file + '*');
       console.groupEnd();
     }
 

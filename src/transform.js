@@ -24,20 +24,11 @@ function initialize(options) {
     '(function() {\n' +
       'if (!$$scope.initialized) {\n' +
         'require("' + pathTo('injectReactDeps') + '")($$scope);\n' +
-        'require("' + pathTo('injectWebSocket') + '")($$scope, ' + port + ');' +
+        'require = require("' + pathTo('overrideRequire') + '")($$scope, require);\n' +
+        'require("' + pathTo('injectWebSocket') + '")($$scope, require, ' + port + ');' +
         '$$scope.initialized = true;\n' +
       '}\n' +
     '})();\n';
-}
-
-/**
- * Override require to proxy react/component require
- * @return {String}
- */
-function overrideRequire() {
-  return '\n' +
-    'require = require("' + pathTo('overrideRequire') + '")' +
-    '($$scope, require);\n';
 }
 
 /**
@@ -46,11 +37,9 @@ function overrideRequire() {
  */
 function overrideExports() {
   return '\n' +
-    ';(function() {\n' +
-      'if (module.exports.name || module.exports.displayName) {\n' +
-        'module.exports = $$scope.makeHot(module.exports);\n' +
-      '}\n' +
-    '})();\n';
+    'if (module.exports.name || module.exports.displayName) {\n' +
+      'module.exports = $$scope.makeHot(module.exports);\n' +
+    '}\n';
 }
 
 /**
@@ -80,13 +69,11 @@ module.exports = function applyReactHotAPI(file, options) {
         bundle = content;
       } else {
         bundle = initialize({ port: port, }) +
-          overrideRequire() +
           content +
           overrideExports();
       }
 
       this.push(bundle);
-      content = [];
       done();
     }
   );

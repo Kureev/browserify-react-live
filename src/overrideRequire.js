@@ -14,10 +14,7 @@ module.exports = function overrideRequire(scope, req) {
         return scope.ReactAddons;
       }
     } else {
-      scope.modules = scope.modules || {};
-      scope.modules[name] = req(name);
-
-      return scope.modules[name];
+      return req(name);
     }
   };
 };
