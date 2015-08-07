@@ -79,9 +79,12 @@ module.exports = function injectWebSocket(scope, req, customPort) {
         return error.error('Patch failed. Can\'t apply last patch to source: ' + e);
       }
 
+      var filename = scope.__root + '/' + data.file;
+      var __require = require('./overrideRequire')(scope, require, filename);
       var f = Function(['require', 'module', 'exports', ], patched);
+
       var _module = {};
-      f(req, _module, {});
+      f(__require, _module, {});
 
       if (_module.exports.name || _module.exports.displayName) {
         scope.makeHot(_module.exports);
