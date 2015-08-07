@@ -24,16 +24,16 @@ Add transform to `package.json`:
 ```
 or run watchify with transform from the CLI:
 ```bash
-watchify -t browserify-react-live src/file.js -o bundles/file.js
+watchify -t browserify-react-live components/file.js -o bundles/file.js
 ```
 
 Start `browserify-patch-server`:
 ```bash
-node_modules/.bin/browserify-patch-server bundles/file.js
+node_modules/.bin/browserify-patch-server components/*
 ```
 or
 ```bash
-browserify-patch-server bundles/file.js
+browserify-patch-server components/*
 ```
 if `browserify-patch-server` has been installed globally.
 
@@ -53,17 +53,17 @@ By default, `browserify-patch-server` establish websocket connection over `8081`
 
 - Server
   ```bash
-  node_modules/.bin/browserify-patch-server bundles/file.js -p 8888
+  node_modules/.bin/browserify-patch-server components/* -p 8888
   ```
 
 - Transform
   ```bash
-  watchify -t [ browserify-react-live -p 8888 ] src/file.js -o bundles/file.js
+  watchify -t [ browserify-react-live -p 8888 ] components/file.js -o bundles/file.js
   ```
 
 #### How it works
 `browserify-react-live` works with `browserify-patch-server`:
 - `browserify-patch-server`
-  This part is responsible for watching changes in the bundle file and compute/broadcast patch. Every time bundle file rebuilds, it automatically calculate patch and send it via websocket to client.
+  This part is responsible for watching changes for specified path and compute/broadcast patch. Every time watched files changes, it automatically calculate patch and send it via websocket to client.
 - `browserify-react-live` transform. Patch browserify's `require` function to inject Dan Abramov's `react-hot-api` and websocket client which will wait for server broadcast and apply received patch.
 
