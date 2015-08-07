@@ -21,14 +21,12 @@ function initialize(options) {
 
   return '\n' +
     'var $$scope = window.__hmr = (window.__hmr || {});\n' +
-    '(function() {\n' +
-      'if (!$$scope.initialized) {\n' +
-        'require("' + pathTo('injectReactDeps') + '")($$scope);\n' +
-        'require = require("' + pathTo('overrideRequire') + '")($$scope, require);\n' +
-        'require("' + pathTo('injectWebSocket') + '")($$scope, require, ' + port + ');' +
-        '$$scope.initialized = true;\n' +
-      '}\n' +
-    '})();\n';
+    'require = require("' + pathTo('overrideRequire') + '")($$scope, require);\n' +
+    'if (!$$scope.initialized) {\n' +
+      'require("' + pathTo('injectReactDeps') + '")($$scope);\n' +
+      'require("' + pathTo('injectWebSocket') + '")($$scope, require, ' + port + ');' +
+      '$$scope.initialized = true;\n' +
+    '}\n';
 }
 
 /**

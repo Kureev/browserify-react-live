@@ -4,6 +4,8 @@ function isReloadable(name) {
 }
 
 module.exports = function overrideRequire(scope, req) {
+  scope.modules = scope.modules || [];
+
   return function overrideRequire(name) {
     if (!isReloadable(name)) {
       if (name === 'react') {
@@ -14,7 +16,11 @@ module.exports = function overrideRequire(scope, req) {
         return scope.ReactAddons;
       }
     } else {
-      return req(name);
+      if (scope.modules[name]) {
+        return scope.modules[name];
+      }
+      scope.modules[name] = req(name);
+      return scope.modules[name];
     }
   };
 };
