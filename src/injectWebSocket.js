@@ -86,7 +86,8 @@ module.exports = function injectWebSocket(scope, req, customPort) {
       var _module = {};
       f(__require, _module, {});
 
-      if (_module.exports.name || _module.exports.displayName) {
+      if (_module.exports &&
+        (_module.exports.name || _module.exports.displayName)) {
         scope.makeHot(_module.exports);
       }
 
