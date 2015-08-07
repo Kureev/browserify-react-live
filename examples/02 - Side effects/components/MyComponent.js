@@ -7,7 +7,7 @@ const styles = {
   },
 };
 
-alert('d23');
+alert('Hi, I\'m a side effect of MyComponent');
 
 module.exports = class MyComponent extends React.Component {
   state = {
@@ -15,7 +15,7 @@ module.exports = class MyComponent extends React.Component {
   }
 
   onClick() {
-    this.setState({ counter: this.state.counter + 2, });
+    this.setState({ counter: this.state.counter + 1, });
   }
 
   render() {
