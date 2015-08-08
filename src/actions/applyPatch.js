@@ -17,7 +17,7 @@ module.exports = function applyPatch(scope, source, data) {
   var patched = diff.applyPatch(source, data.patch);
 
   var filename = scope.__root + '/' + data.file;
-  var __require = require('./overrideRequire')(scope, require, filename);
+  var __require = require('../overrideRequire')(scope, require, filename);
   var f = Function(['require', 'module', 'exports', ], patched);
 
   var _module = {};
