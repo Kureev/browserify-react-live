@@ -35,7 +35,8 @@ function initialize(options) {
  */
 function overrideExports() {
   return '\n' +
-    'if (module.exports.name || module.exports.displayName) {\n' +
+    'if (module.exports && ' +
+      '(module.exports.name || module.exports.displayName)) {\n' +
       'module.exports = $$scope.makeHot(module.exports);\n' +
     '}\n';
 }

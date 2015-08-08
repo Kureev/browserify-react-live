@@ -12,7 +12,9 @@ module.exports = function applyPatch(scope, source, data) {
   system.log('Received patch for *' +
     data.file + '* (' + bytesToKb(data.patch.length) + 'kb)');
 
-  system.log('Patch content:\n\n', data.patch, '\n\n');
+  console.groupCollapsed('Patch content');
+  console.log(data.patch);
+  console.groupEnd();
 
   var patched = diff.applyPatch(source, data.patch);
 

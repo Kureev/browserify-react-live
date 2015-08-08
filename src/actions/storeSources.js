@@ -8,8 +8,12 @@ module.exports = function storeSources(scope, sources) {
   var timestamp = '['+ moment().format('HH:mm:ss') + ']';
   scope.files = scope.files || sources;
 
-  scope.files.forEach(function iterateBundles(file) {
-    system.log(timestamp + ' Initial file size: *' +
-      bytesToKb(file.content.length) + 'Kb*');
+  console.groupCollapsed(timestamp, 'Initialized react-live-patch');
+
+  scope.files.forEach(function iterateSources(source) {
+    system.log(timestamp + ' File *' + source.file + '*(' +
+      bytesToKb(source.content.length) + 'Kb) has been added to react-live-patch');
   });
+
+  console.groupEnd();
 };

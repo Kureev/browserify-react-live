@@ -3,7 +3,7 @@ var storeSources = require('./actions/storeSources');
 var applyPatch = require('./actions/applyPatch');
 
 module.exports = function injectWebSocket(scope, req, port) {
-  scope.ws = new WebSocket('ws://localhost:' + port || 8081);
+  scope.ws = new WebSocket('ws://localhost:' + (port || 8081));
   scope.ws.onmessage = function onMessage(res) {
     var data = JSON.parse(res.data);
 
