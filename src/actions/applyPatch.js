@@ -1,20 +1,21 @@
 var moment = require('moment');
-var Logdown = require('logdown');
 var bytesToKb = require('./bytesToKb');
 var diff = require('diff');
-
-var system = new Logdown({ prefix: '[BPS:SYSTEM]', });
 
 module.exports = function applyPatch(scope, source, data) {
   var timestamp = '['+ moment().format('HH:mm:ss') + ']';
 
-  console.groupCollapsed(timestamp, 'Patch for', data.file);
-  system.log('Received patch for *' +
-    data.file + '* (' + bytesToKb(data.patch.length) + 'kb)');
+  console.groupCollapsed(timestamp, 'Patch for',
+    data.file, '(' + bytesToKb(data.patch.length) + 'kb)');
 
-  console.groupCollapsed('Patch content');
-  console.log(data.patch);
-  console.groupEnd();
+  var patchArr = data.patch.split('\n');
+  patchArr.forEach(function iteratePatch(str) {
+    if (str.match(/^\+\s/)) {
+      console.log('%c' + str.replace(/^\+\s+/, '+ '), 'color: green');
+    } else if (str.match(/^\-\s/)) {
+      console.log('%c' + str.replace(/^-\s+/, '- '), 'color: red');
+    }
+  });
 
   var patched = diff.applyPatch(source, data.patch);
 
@@ -36,6 +37,5 @@ module.exports = function applyPatch(scope, source, data) {
     }
   });
 
-  system.log('Applied patch to *' + data.file + '*');
   console.groupEnd();
 };

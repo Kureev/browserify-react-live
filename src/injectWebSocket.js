@@ -12,7 +12,7 @@ module.exports = function injectWebSocket(scope, req, port) {
      * @param {String} data.error
      */
     if (data.error) {
-      processError(data.error);
+      processError(data);
     }
 
     /**
