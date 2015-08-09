@@ -21,7 +21,7 @@ function initialize(options) {
   var port = options.port;
 
   return '\n' +
-    'var $$scope = window.__hmr = (window.__hmr || {});\n' +
+    'var $$scope = window.__RLP = (window.__RLP || {});\n' +
     'if (!$$scope.initialized) {\n' +
       'require("' + pathTo('injectReactDeps') + '")($$scope);\n' +
       'require("' + pathTo('injectWebSocket') + '")($$scope, require, ' + port + ');' +
@@ -35,7 +35,8 @@ function initialize(options) {
  */
 function overrideExports() {
   return '\n' +
-    'if (module.exports.name || module.exports.displayName) {\n' +
+    'if (module.exports && ' +
+      '(module.exports.name || module.exports.displayName)) {\n' +
       'module.exports = $$scope.makeHot(module.exports);\n' +
     '}\n';
 }
