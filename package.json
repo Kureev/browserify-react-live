@@ -13,6 +13,7 @@
     "logdown": "^1.2.4",
     "moment": "^2.10.3",
     "react-hot-api": "^0.4.5",
+    "strip-ansi": "^3.0.0",
     "through2": "^2.0.0",
     "ws": "^0.7.2"
   }
