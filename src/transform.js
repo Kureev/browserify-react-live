@@ -1,4 +1,5 @@
 const through = require('through2');
+var minimatch = require('minimatch');
 const pjson = require('../package.json');
 const path = require('path');
 
@@ -50,16 +51,30 @@ function isJSON(file) {
   return file.slice(-4) === 'json';
 }
 
-function overrideRequire(file) {
+function overrideRequire() {
   return '\n' +
-  '$$scope.__root = $$scope.__root || "' + path.resolve(file, '../') + '";\n' +
   'require = require("' + pathTo('overrideRequire') + '")' +
-  '($$scope, require, "' + file + '");\n';
+  '($$scope, require, __filename);\n';
+}
+
+function makeShouldBeDecorated(options) {
+  var only = options.only;
+
+  if (!only) {
+    return function shouldBeDecorated() {
+      return true;
+    };
+  }
+
+  return function shouldBeDecorated(file) {
+    return minimatch(file, options.only)
+      || minimatch(file, '**/' + options.only);
+  };
 }
 
 module.exports = function applyReactHotAPI(file, options) {
   var content = [];
-  var port = options.port;
+  var shouldBeDecorated = makeShouldBeDecorated(options);
 
   return through(
     function transform(part, enc, next) {
@@ -71,11 +86,11 @@ module.exports = function applyReactHotAPI(file, options) {
       var bundle;
       content = content.join('');
 
-      if (isJSON(file)) {
+      if (!shouldBeDecorated(file) || isJSON(file)) {
         bundle = content;
       } else {
-        bundle = initialize({ port: port, }) +
-          overrideRequire(file) +
+        bundle = initialize(options) +
+          overrideRequire() +
           content +
           overrideExports();
       }

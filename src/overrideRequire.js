@@ -6,9 +6,9 @@ function isReloadable(name) {
 }
 
 module.exports = function overrideRequire(scope, req, filename) {
-  scope.modules = scope.modules || [];
+  scope.modules = scope.modules || {};
 
-  return function overrideRequire(name) {
+  return function require(name) {
     var __name;
     if (!isReloadable(name)) {
       if (name === 'react') {
@@ -19,11 +19,15 @@ module.exports = function overrideRequire(scope, req, filename) {
         return scope.ReactAddons;
       }
     } else {
-      __name = path.resolve(filename, '../', name);
+      __name = path.join(filename, '../', name);
+      if (__name.indexOf('undefined') === 0) {
+        __name = __name.slice(9);
+      }
 
       if (scope.modules[__name]) {
         return scope.modules[__name];
       }
+
       scope.modules[__name] = req(name);
       return scope.modules[__name];
     }

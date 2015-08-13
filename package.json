@@ -11,6 +11,7 @@
   "dependencies": {
     "diff": "^1.4.0",
     "logdown": "^1.2.4",
+    "minimatch": "^2.0.10",
     "moment": "^2.10.3",
     "react-hot-api": "^0.4.5",
     "strip-ansi": "^3.0.0",
