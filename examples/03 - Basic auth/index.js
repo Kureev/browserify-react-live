@@ -5,58 +5,9 @@ var Login = require('./components/Login');
 var Dashboard = require('./components/Dashboard');
 var Logout = require('./components/Logout');
 var About = require('./components/About');
-var { Route, RouteHandler, Link } = Router;
-
-class App extends React.Component {
-  state = {
-    loggedIn: auth.loggedIn(),
-  }
-
-  setStateOnAuth(loggedIn) {
-    this.setState({
-      loggedIn: loggedIn,
-    });
-  }
-
-  componentWillMount() {
-    auth.onChange = this.setStateOnAuth.bind(this);
-    auth.login();
-  }
-
-  render() {
-    return (
-      <div>
-        <ul>
-          <li>
-            {this.state.loggedIn ? (
-              <Link to="logout">Log out</Link>
-            ) : (
-              <Link to="login">Sign in</Link>
-            )}
-          </li>
-          <li><Link to="about">About</Link></li>
-          <li><Link to="dashboard">Dashboard</Link> (authenticated)</li>
-        </ul>
-        <RouteHandler/>
-      </div>
-    );
-  }
-}
-
-var requireAuth = (Component) => {
-  return class Authenticated extends React.Component {
-    static willTransitionTo(transition) {
-      if (!auth.loggedIn()) {
-        transition.redirect('/login', {}, {
-          'nextPath': transition.path,
-        });
-      }
-    }
-    render() {
-      return <Component {...this.props}/>;
-    }
-  };
-};
+var App = require('./components/App');
+var requireAuth = require('./vendor/requireAuth');
+var { Route } = Router;
 
 var Dashboard = requireAuth(Dashboard);
 
