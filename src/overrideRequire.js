@@ -21,7 +21,7 @@ module.exports = function overrideRequire(scope, req, filename) {
     } else {
       __name = path.join(filename, '../', name);
       if (__name.indexOf('undefined') === 0) {
-        __name = __name.slice(9);
+        __name = __name.slice('undefined'.length);
       }
 
       if (scope.modules[__name]) {

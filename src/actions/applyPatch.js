@@ -24,9 +24,16 @@ function logChanges(patch) {
  * @return {Boolean}
  */
 function canBePatched(module) {
-  return module.exports &&
-    module.exports.name ||
-    module.exports.displayName;
+  return module.exports.name || module.exports.displayName;
+}
+
+/**
+ * Check if module has exports
+ * @param  {Any} module
+ * @return {Boolean}
+ */
+function hasExports(module) {
+  return !!module.exports;
 }
 
 module.exports = function applyPatch(scope, source, data) {
@@ -55,7 +62,7 @@ module.exports = function applyPatch(scope, source, data) {
   // Run module like as browserify does
   f(__require, _module, {});
 
-  if (canBePatched(_module)) {
+  if (hasExports(_module) && canBePatched(_module)) {
     scope.makeHot(_module.exports);
   }
 
