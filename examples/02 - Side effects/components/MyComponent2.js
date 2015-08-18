@@ -1,12 +1,6 @@
 const React = require('react');
 const TestDependency = require('./Dep');
-
-const styles = {
-  button: {
-    padding: 10,
-    display: 'block',
-  },
-};
+const theme = require('./theme');
 
 module.exports = class MyComponent2 extends React.Component {
   state = {
@@ -21,7 +15,7 @@ module.exports = class MyComponent2 extends React.Component {
     return (
       <div>
         Counter is {this.state.counter}
-        <button style={styles.button} onClick={this.onClick.bind(this)}>
+        <button style={theme.button} onClick={this.onClick.bind(this)}>
           <span>Decrease</span>
         </button>
         <TestDependency />
