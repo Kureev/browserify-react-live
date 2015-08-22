@@ -35,10 +35,8 @@ function initialize(options) {
  */
 function overrideExports() {
   return '\n' +
-    'if (module.exports && ' +
-      '(module.exports.name || module.exports.displayName) &&' +
-      'typeof module.exports.render === "function" &&' +
-      'typeof module.exports.setState === "function") {\n' +
+    'if (module.exports && (typeof module.exports === "function") && ' +
+      '(module.exports.name || module.exports.displayName)) {\n' +
       'module.exports = $$scope.makeHot(module.exports);\n' +
     '}\n';
 }
@@ -72,7 +70,6 @@ module.exports = function applyReactHotAPI(file, options) {
       var bundle;
       content = content.join('');
 
-      // bundle = content;
       if (isJSON(file)) {
         bundle = content;
       } else {
