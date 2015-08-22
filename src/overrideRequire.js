@@ -1,31 +1,33 @@
 var path = require('path');
 
-function isReloadable(name) {
-  var isReact = ['react', 'react/addons', 'react-dom', ].indexOf(name) > -1;
-  return !isReact;
+function isNodeModule(name) {
+  return name[0] !== '.';
 }
 
 module.exports = function overrideRequire(scope, req, filename) {
   scope.modules = scope.modules || {};
 
-  return function require(name) {
+  return function overrideRequire(name) {
     var __name;
-    if (!isReloadable(name)) {
+    if (isNodeModule(name)) {
       if (name === 'react') {
         return scope.React;
       } else if (name === 'react-dom') {
         return scope.ReactDOM;
       } else if (name === 'react/addons') {
         return scope.ReactAddons;
+      } else {
+        return req(name);
       }
     } else {
-      __name = path.join(filename, '../', name);
-      if (__name.indexOf('undefined') === 0) {
-        __name = __name.slice('undefined'.length);
-      }
+      __name = path.resolve(filename, '../', name);
 
-      if (scope.modules[__name]) {
-        return scope.modules[__name];
+      var module = Object.keys(scope.modules).filter(function (module) {
+        return module.slice(-__name.length) === __name;
+      })[0];
+
+      if (scope.modules[module]) {
+        return scope.modules[module];
       }
 
       scope.modules[__name] = req(name);

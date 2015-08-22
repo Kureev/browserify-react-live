@@ -24,16 +24,9 @@ function logChanges(patch) {
  * @return {Boolean}
  */
 function canBePatched(module) {
-  return module.exports.name || module.exports.displayName;
-}
-
-/**
- * Check if module has exports
- * @param  {Any} module
- * @return {Boolean}
- */
-function hasExports(module) {
-  return !!module.exports;
+  return module.exports &&
+    module.exports.name ||
+    module.exports.displayName;
 }
 
 module.exports = function applyPatch(scope, source, data) {
@@ -47,7 +40,8 @@ module.exports = function applyPatch(scope, source, data) {
   var patched = diff.applyPatch(source, data.patch);
 
   // Build full file path for require
-  var filename = scope.__root + '/' + data.file;
+  // var filename = scope.__root + '/' + data.file;
+  var filename = data.file;
 
   // Building require for specific filename
   // In our custom require we'll use filename to scope relative paths
@@ -62,7 +56,7 @@ module.exports = function applyPatch(scope, source, data) {
   // Run module like as browserify does
   f(__require, _module, {});
 
-  if (hasExports(_module) && canBePatched(_module)) {
+  if (canBePatched(_module)) {
     scope.makeHot(_module.exports);
   }
 
