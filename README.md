@@ -1,6 +1,8 @@
 # Browserify React Live
-This is a [browserify](https://github.com/substack/node-browserify) transform which works similarly to [react-hot-loader](https://github.com/gaearon/react-hot-loader).  
-Once you run you app in the browser, it monitors your JavaScript code and only updates the changed component, preserving the state of the application. 
+This is a [browserify](https://github.com/substack/node-browserify) transform which works similarly to [react-hot-loader](https://github.com/gaearon/react-hot-loader).
+Once you run you app in the browser, it monitors your JavaScript code and only updates the changed component, preserving the state of the application.
+
+<img src="https://habrastorage.org/files/f42/100/e62/f42100e623b94bcc955c44ac65082028.gif"/>
 
 ## Installing
 ```bash
@@ -16,7 +18,7 @@ npm i && npm start
 
 Run [http://localhost:8080](http://localhost:8080) and try updating the component.
 
-## Running 
+## Running
 
 Add transform to `package.json`:
 ```json
