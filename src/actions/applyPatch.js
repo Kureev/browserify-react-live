@@ -29,8 +29,8 @@ function logChanges(patch) {
  */
 function canBePatched(module) {
   return module.exports &&
-    module.exports.name ||
-    module.exports.displayName;
+    (typeof module.exports === 'function') &&
+    (module.exports.name || module.exports.displayName);
 }
 
 module.exports = function applyPatch(scope, source, data) {

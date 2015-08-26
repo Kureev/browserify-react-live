@@ -20,7 +20,7 @@ function Proxies() {
 Proxies.prototype = {
   get: function get(name) {
     // Preprocess name to shrink extension if supplied
-    var proxyName = name.replace(/\..+$/, '');
+    var proxyName = name.replace(/\.(js|jsx)$/, '');
     var proxy = this.proxies[proxyName];
 
     // If we don't have an exact match,
@@ -63,7 +63,6 @@ Proxies.prototype = {
   update: function update(name, newComponent) {
     var proxy = this.get(name);
     if (proxy) {
-      console.log('proxy is', proxy);
       return proxy.update(newComponent);
     }
 

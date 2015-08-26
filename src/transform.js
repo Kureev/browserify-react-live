@@ -19,6 +19,7 @@ function pathTo(file) {
  */
 function initialize(options) {
   var port = options.port;
+  var baseDir = options.baseDir;
 
   return '\n' +
     'var $$scope = window.__RLP = (window.__RLP || {});\n' +
@@ -26,6 +27,7 @@ function initialize(options) {
       'var Proxies = require("' + pathTo('Proxies') + '");\n' +
       'require("' + pathTo('injectReactDeps') + '")($$scope);\n' +
       'require("' + pathTo('injectWebSocket') + '")($$scope, require, ' + port + ');\n' +
+      '$$scope.baseDir = "' + baseDir + '";\n' +
       '$$scope.proxies = new Proxies();\n' +
       '$$scope.initialized = true;\n' +
     '}\n';
@@ -64,7 +66,10 @@ module.exports = function applyReactHotAPI(file, options) {
       content = content.join('');
 
       if (!isJSON(file)) {
-        prelude = initialize({ port: port, }) + overrideRequire(file);
+        prelude = initialize({
+          port: port,
+          baseDir: path.resolve('./'),
+        }) + overrideRequire(file);
       }
 
       this.push(prelude + content); done();
