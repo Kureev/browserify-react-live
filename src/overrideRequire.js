@@ -8,7 +8,6 @@ module.exports = function overrideRequire(scope, req, filename) {
   scope.modules = scope.modules || {};
 
   return function overrideRequire(name) {
-    var __name;
     if (isNodeModule(name)) {
       if (name === 'react') {
         return scope.React;
@@ -20,18 +19,25 @@ module.exports = function overrideRequire(scope, req, filename) {
         return req(name);
       }
     } else {
-      __name = path.resolve(filename, '../', name);
+      var __name = path.resolve(filename, '../', name);
+      // Try to find stored proxy by name
+      var proxy = scope.proxies.get(__name);
 
-      var module = Object.keys(scope.modules).filter(function (module) {
-        return module.slice(-__name.length) === __name;
-      })[0];
-
-      if (scope.modules[module]) {
-        return scope.modules[module];
+      // If succeeded, return proxied component
+      if (proxy) {
+        return proxy.get();
       }
 
-      scope.modules[__name] = req(name);
-      return scope.modules[__name];
+      // Otherwise use standard require to get module
+      var module = req(name);
+      // And try to proxy it
+      proxy = scope.proxies.add(name, module);
+
+      if (proxy) {
+        return proxy.get();
+      }
+
+      return module;
     }
   };
 };

@@ -1,6 +1,10 @@
 var moment = require('moment');
+var React = require('react');
+var ReactProxy = require('react-proxy');
 var bytesToKb = require('./bytesToKb');
 var diff = require('diff');
+
+var forceUpdate = ReactProxy.getForceUpdate(React);
 
 /**
  * Parse patch file and log changes in a fancy way
@@ -57,7 +61,8 @@ module.exports = function applyPatch(scope, source, data) {
   f(__require, _module, {});
 
   if (canBePatched(_module)) {
-    scope.makeHot(_module.exports);
+    var mountedInstances = scope.proxies.update(filename, _module.exports);
+    mountedInstances.forEach(forceUpdate);
   }
 
   scope.files.forEach(function iterateBundles(file) {

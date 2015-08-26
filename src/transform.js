@@ -23,21 +23,11 @@ function initialize(options) {
   return '\n' +
     'var $$scope = window.__RLP = (window.__RLP || {});\n' +
     'if (!$$scope.initialized) {\n' +
+      'var Proxies = require("' + pathTo('Proxies') + '");\n' +
       'require("' + pathTo('injectReactDeps') + '")($$scope);\n' +
-      'require("' + pathTo('injectWebSocket') + '")($$scope, require, ' + port + ');' +
+      'require("' + pathTo('injectWebSocket') + '")($$scope, require, ' + port + ');\n' +
+      '$$scope.proxies = new Proxies();\n' +
       '$$scope.initialized = true;\n' +
-    '}\n';
-}
-
-/**
- * Decorate every component module by `react-hot-api` makeHot method
- * @return {String}
- */
-function overrideExports() {
-  return '\n' +
-    'if (module.exports && (typeof module.exports === "function") && ' +
-      '(module.exports.name || module.exports.displayName)) {\n' +
-      'module.exports = $$scope.makeHot(module.exports);\n' +
     '}\n';
 }
 
@@ -75,8 +65,7 @@ module.exports = function applyReactHotAPI(file, options) {
       } else {
         bundle = initialize({ port: port, }) +
           overrideRequire(file) +
-          content +
-          overrideExports();
+          content;
       }
 
       this.push(bundle);
