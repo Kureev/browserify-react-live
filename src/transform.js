@@ -40,10 +40,14 @@ function isJSON(file) {
   return file.slice(-4) === 'json';
 }
 
-function overrideRequire(file) {
-  return '\n' +
-  'require = require("' + pathTo('overrideRequire') + '")' +
-  '($$scope, require, "' + file + '");\n';
+/**
+ * Generate overriden require function
+ * @param  {String} filename
+ * @return {String} Overriden require injection
+ */
+function overrideRequire(filename) {
+  return 'require = require("' + pathTo('overrideRequire') + '")' +
+  '($$scope, require, "' + filename + '");\n';
 }
 
 module.exports = function applyReactHotAPI(file, options) {
@@ -52,24 +56,18 @@ module.exports = function applyReactHotAPI(file, options) {
 
   return through(
     function transform(part, enc, next) {
-      content.push(part);
-      next();
+      content.push(part); next();
     },
 
     function finish(done) {
-      var bundle;
+      var prelude = '';
       content = content.join('');
 
-      if (isJSON(file)) {
-        bundle = content;
-      } else {
-        bundle = initialize({ port: port, }) +
-          overrideRequire(file) +
-          content;
+      if (!isJSON(file)) {
+        prelude = initialize({ port: port, }) + overrideRequire(file);
       }
 
-      this.push(bundle);
-      done();
+      this.push(prelude + content); done();
     }
   );
 };
