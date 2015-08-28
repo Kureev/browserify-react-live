@@ -25,9 +25,10 @@ function initialize(options) {
     'var $$scope = window.__RLP = (window.__RLP || {});\n' +
     'if (!$$scope.initialized) {\n' +
       'var Proxies = require("' + pathTo('Proxies') + '");\n' +
-      'require("' + pathTo('injectReactDeps') + '")($$scope);\n' +
+      'var StaticModules = require("' + pathTo('StaticModules') + '");\n' +
       'require("' + pathTo('injectWebSocket') + '")($$scope, require, ' + port + ');\n' +
       '$$scope.baseDir = "' + baseDir + '";\n' +
+      '$$scope.modules = new StaticModules();\n' +
       '$$scope.proxies = new Proxies();\n' +
       '$$scope.initialized = true;\n' +
     '}\n';

@@ -1,28 +1,29 @@
 var path = require('path');
-var StaticModules = require('./StaticModules');
 
 function isNodeModule(name) {
   return name[0] !== '.';
 }
 
+function makeAddStaticModule(scope, req) {
+  return function addStaticModule(name) {
+    var module = scope.modules.get(name);
+
+    if (!module) {
+      module = req(name);
+    }
+
+    scope.modules.add(name, module);
+
+    return module;
+  }
+}
+
 module.exports = function overrideRequire(scope, req, filename) {
-  scope.modules = scope.modules || new StaticModules();
+  var addStaticModule = makeAddStaticModule(scope, req);
 
   return function overrideRequire(name) {
     if (isNodeModule(name)) {
-      if (name === 'react') {
-        return scope.React;
-      }
-
-      if (name === 'react-dom') {
-        return scope.ReactDOM;
-      }
-
-      if (name === 'react/addons') {
-        return scope.ReactAddons;
-      }
-
-      return req(name);
+      return addStaticModule(name);
     }
 
     var fullName = path.resolve(filename, '../', name);
@@ -39,23 +40,15 @@ module.exports = function overrideRequire(scope, req, filename) {
       return proxy.get();
     }
 
-    // Otherwise check if we have it as static module
-    var module = scope.modules.get(fullName);
+    // Otherwise try to add static module
+    var module = addStaticModule(name);
 
-    // If not, use standard require to get module
-    if (!module) {
-      module = req(name);
-    }
-
-    // And try to proxy it
+    // And then proxy it
     proxy = scope.proxies.add(fullName, module);
 
     if (proxy) {
       return proxy.get();
     }
-
-    // Hm, seems it's not a React Component or whatever...
-    scope.modules.add(fullName, module);
 
     return module;
   };
