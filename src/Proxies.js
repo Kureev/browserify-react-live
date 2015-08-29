@@ -1,5 +1,9 @@
 var ReactProxy = require('react-proxy');
 
+function isWindows() {
+  return navigator.platform.indexOf('Win') > -1;
+}
+
 function isObject(toTest) {
   return Object.prototype.toString.apply(toTest) === '[object Object]';
 }
@@ -27,13 +31,17 @@ Proxies.prototype = {
     // try to find by part of the name
     if (!proxy) {
       proxyName = Object.keys(this.proxies).filter(function iterateProxies(p) {
+        if (isWindows()) {
+          return proxyName.slice(-p.length) === p;
+        }
+
         return p.slice(-proxyName.length) === proxyName;
       })[0];
 
       proxy = this.proxies[proxyName];
     }
 
-    return proxy || false;
+    return proxy;
   },
 
   add: function add(name, component) {

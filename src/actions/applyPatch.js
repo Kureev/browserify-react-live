@@ -62,7 +62,13 @@ module.exports = function applyPatch(scope, source, data) {
 
   if (canBePatched(_module)) {
     var mountedInstances = scope.proxies.update(filename, _module.exports);
+    if (!mountedInstances) {
+      throw Error('Can\'t find ' + filename + ' in mounted instances');
+    }
+
     mountedInstances.forEach(forceUpdate);
+  } else {
+    scope.modules.update(filename, _module.exports);
   }
 
   scope.files.forEach(function iterateBundles(file) {

@@ -1,18 +1,22 @@
 var path = require('path');
+var detective = require('detective');
 
 function isNodeModule(name) {
   return name[0] !== '.';
 }
 
 function makeAddStaticModule(scope, req) {
-  return function addStaticModule(name) {
+  return function addStaticModule(name, fullName) {
     var module = scope.modules.get(name);
 
     if (!module) {
-      module = req(name);
+      try {
+        module = req(name);
+        scope.modules.add(fullName || name, module);
+      } catch (e) {
+        return false;
+      }
     }
-
-    scope.modules.add(name, module);
 
     return module;
   }
@@ -26,7 +30,7 @@ module.exports = function overrideRequire(scope, req, filename) {
       return addStaticModule(name);
     }
 
-    var fullName = path.resolve(filename, '../', name);
+    var fullName = path.resolve(path.dirname(filename), name);
 
     if (fullName.indexOf(scope.baseDir) === 0) {
       fullName = fullName.slice(scope.baseDir.length);
@@ -41,7 +45,7 @@ module.exports = function overrideRequire(scope, req, filename) {
     }
 
     // Otherwise try to add static module
-    var module = addStaticModule(name);
+    var module = addStaticModule(name, fullName);
 
     // And then proxy it
     proxy = scope.proxies.add(fullName, module);
