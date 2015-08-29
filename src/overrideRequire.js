@@ -1,33 +1,29 @@
 var path = require('path');
-var detective = require('detective');
 
 function isNodeModule(name) {
   return name[0] !== '.';
 }
 
-function makeAddStaticModule(scope, req) {
-  return function addStaticModule(name, fullName) {
+function makeAddStaticModule(scope) {
+  return function addStaticModule(name, content) {
     var module = scope.modules.get(name);
 
     if (!module) {
-      try {
-        module = req(name);
-        scope.modules.add(fullName || name, module);
-      } catch (e) {
-        return false;
-      }
+      module = content
     }
 
-    return module;
+    scope.modules.add(name, module);
+
+    return scope.modules.get(name);
   }
 }
 
 module.exports = function overrideRequire(scope, req, filename) {
-  var addStaticModule = makeAddStaticModule(scope, req);
+  var addStaticModule = makeAddStaticModule(scope);
 
   return function overrideRequire(name) {
     if (isNodeModule(name)) {
-      return addStaticModule(name);
+      return addStaticModule(name, req(name));
     }
 
     var fullName = path.resolve(path.dirname(filename), name);
@@ -44,8 +40,12 @@ module.exports = function overrideRequire(scope, req, filename) {
       return proxy.get();
     }
 
-    // Otherwise try to add static module
-    var module = addStaticModule(name, fullName);
+    // Otherwise try to include a module
+    if (module = scope.modules.get(fullName || name)) {
+      return module;
+    }
+
+    var module = req(name);
 
     // And then proxy it
     proxy = scope.proxies.add(fullName, module);
@@ -53,6 +53,9 @@ module.exports = function overrideRequire(scope, req, filename) {
     if (proxy) {
       return proxy.get();
     }
+
+    // if it's not proxible, add it to static
+    addStaticModule(fullName, module);
 
     return module;
   };
