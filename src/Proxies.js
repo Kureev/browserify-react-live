@@ -13,7 +13,7 @@ function isFunction(toTest) {
 }
 
 function isReactComponent(component) {
-  return isFunction(component) && component.name &&
+  return isFunction(component) &&
     isFunction(component.prototype.render);
 }
 
