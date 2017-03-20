@@ -1,4 +1,6 @@
 # Browserify React Live
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/Kureev/browserify-react-live.svg)](https://greenkeeper.io/)
 This is a [browserify](https://github.com/substack/node-browserify) transform which works similarly to [react-hot-loader](https://github.com/gaearon/react-hot-loader).
 Once you run you app in the browser, it monitors your JavaScript code and only updates the changed component, preserving the state of the application.
 
