@@ -9,13 +9,13 @@
   "author": "Alexey Kureev <kureev-mail@ya.ru> (https://github.com/Kureev)",
   "license": "MIT",
   "dependencies": {
-    "diff": "^1.4.0",
-    "logdown": "^1.2.4",
-    "minimatch": "^2.0.10",
+    "diff": "^3.2.0",
+    "logdown": "^2.2.0",
+    "minimatch": "^3.0.3",
     "moment": "^2.10.3",
-    "react-proxy": "^0.6",
+    "react-proxy": "^1.1.8",
     "strip-ansi": "^3.0.0",
     "through2": "^2.0.0",
-    "ws": "^0.7.2"
+    "ws": "^2.2.1"
   }
 }
